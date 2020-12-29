@@ -1,0 +1,207 @@
+% Template for ICASSP-2013 paper; to be used with:
+%          spconf.sty  - ICASSP/ICIP LaTeX style file, and
+%          IEEEbib.bst - IEEE bibliography style file.
+% --------------------------------------------------------------------------
+\documentclass{article}
+%\documentclass[conferen\overlinece]{IEEEtran}
+%\documentclass[journal]{IEEEtran}
+\usepackage{amssymb,bm}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{appendix}
+\usepackage{hyperref}
+\usepackage{authblk}
+\usepackage{color}
+
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{cor}{Corollary}
+\newtheorem{alg}[thm]{Algorithm}
+\newtheorem{assu}[thm]{Assumption}
+
+%\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{exmp}{Example}[section]
+\newtheorem{app}{Application}
+\newtheorem{prob}{Problem}
+\newtheorem{pf}{Proof}
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+
+\usepackage{graphics}
+\usepackage{graphicx,subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+% \usepackage[colorlinks,linkcolor=red,citecolor=black]{hyperref}
+\hypersetup{colorlinks,linkcolor={blue},citecolor={blue},urlcolor={red}}
+
+%\usepackage[english]{babel}
+
+\usepackage{cite}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+
+%%%%%%%%%% TABLE package %%%%%%%%%%%%%
+\usepackage{threeparttable}
+\usepackage{float}
+\floatstyle{plaintop}
+\restylefloat{table}
+\def\var{\rm{var}}
+%\renewcommand{\arraystretch}{2.0}
+
+%%%%%%%%%% Figure %%%%%%%%%%%%%%%%
+\floatstyle{plain}
+\restylefloat{figure}
+\usepackage{placeins}
+\def\diag{\rm{diag}}
+\newcommand{\mbR}{\mathbb{R}}
+
+%\newcommand{\nosemic}{\renewcommand{\@endalgocfline}{\relax}}% Drop semi-colon ;
+%\newcommand{\dosemic}{\renewcommand{\@endalgocfline}{\algocf@endline}}% Reinstate semi-colon ;
+%\newcommand{\pushline}{\Indp}% Indent
+%\newcommand{\popline}{\Indm\dosemic}% Undent
+
+%\usepackage[dvipdfm]{hyperref}
+
+%\usepackage{fancyheadings}
+%\pagestyle{fancy}
+%\lhead{page \thepage}
+% \chead{By J. Yi on \today, jirong-yi@uiowa.edu}
+%\rhead{\ }
+\renewcommand{\baselinestretch}{1.0}
+
+% Example definitions.
+% --------------------
+\def\x{{\mathbf x}}
+\def\y{{\mathbf y}}
+\def\cov{\rm{cov}}
+%\def\L{{\cal L}}
+
+\newcommand{\bSigma}{{\boldsymbol \Sigma}}
+\newcommand{\bOmega}{{\boldsymbol \Omega}}
+\newcommand{\bbeta}{{\boldsymbol \beta}}
+\newcommand{\bepsilon}{{\boldsymbol \epsilon}}
+\newcommand{\bA}{{\boldsymbol A}}
+\newcommand{\bB}{{\boldsymbol B}}
+\newcommand{\bC}{{\boldsymbol C}}
+\newcommand{\bD}{{\boldsymbol D}}
+\newcommand{\bE}{{\boldsymbol E}}
+\newcommand{\bF}{{\boldsymbol E}}
+\newcommand{\bG}{{\boldsymbol G}}
+\newcommand{\bH}{{\boldsymbol H}}
+\newcommand{\bI}{{\boldsymbol I}}
+\newcommand{\bJ}{{\boldsymbol J}}
+\newcommand{\bM}{{\boldsymbol M}}
+\newcommand{\bN}{{\boldsymbol N}}
+\newcommand{\bP}{{\boldsymbol P}}
+\newcommand{\bQ}{{\boldsymbol Q}}
+\newcommand{\bR}{{\boldsymbol R}}
+\newcommand{\bS}{{\boldsymbol S}}
+\newcommand{\bT}{{\boldsymbol T}}
+\newcommand{\bU}{{\boldsymbol U}}
+\newcommand{\bV}{{\boldsymbol V}}
+\newcommand{\bW}{{\boldsymbol W}}
+\newcommand{\bX}{{\boldsymbol X}}
+\newcommand{\bY}{{\boldsymbol Y}}
+\newcommand{\bZ}{{\boldsymbol Z}}
+\newcommand{\bRA}{{\boldsymbol {RA}}}
+
+\newcommand{\ba}{{\boldsymbol a}}
+\newcommand{\bb}{{\boldsymbol b}}
+\newcommand{\bc}{{\boldsymbol c}}
+\newcommand{\bd}{{\boldsymbol d}}
+\newcommand{\be}{{\boldsymbol e}}
+\newcommand{\f}{{\boldsymbol f}}
+\newcommand{\bg}{{\boldsymbol g}}
+\newcommand{\bh}{{\boldsymbol h}}
+\newcommand{\bn}{{\boldsymbol n}}
+\newcommand{\bp}{{\boldsymbol p}}
+\newcommand{\bq}{{\boldsymbol q}}
+\newcommand{\bu}{{\boldsymbol u}}
+\newcommand{\bv}{{\boldsymbol v}}
+\newcommand{\bw}{{\boldsymbol w}}
+\newcommand{\bx}{{\boldsymbol x}}
+\newcommand{\bs}{{\boldsymbol s}}
+\newcommand{\by}{{\boldsymbol y}}
+\newcommand{\bz}{{\boldsymbol z}}
+
+
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\C}{{\mathbb C}}
+\newcommand{\ind}{{\mathbb I}}
+\newcommand{\Pb}{{\mathbb P}}
+
+\newcommand{\cTheta}{{\mathcal{\Theta}}}
+\newcommand{\cA}{{\mathcal{A}}}
+\newcommand{\cP}{{\mathcal{P}}}
+\newcommand{\cD}{{\mathcal{D}}}
+\newcommand{\cR}{{\mathcal{R}}}
+\newcommand{\cH}{{\mathcal{H}}}
+\newcommand{\cI}{{\mathcal{I}}}
+\newcommand{\cN}{{\mathcal{N}}}
+\newcommand{\cG}{{\mathcal{G}}}
+\newcommand{\cT}{{\mathcal{T}}}
+\newcommand{\cQ}{{\mathcal{Q}}}
+\newcommand{\cS}{{\mathcal S}}
+\newcommand{\cE}{{\mathcal E}}
+\newcommand{\cX}{{\boldsymbol {\mathcal X}}}
+\newcommand{\cL}{\mathcal L}
+\newcommand{\cW}{{\boldsymbol {\mathcal W}}}
+
+
+\newcommand{\grad}{{\nabla}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\argmin}{\mathrm{argmin}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\sgn}{\mathrm{sgn}}
+
+
+% Title.
+% ------
+\begin{document}
+
+\title{Sensing Matrix Design}
+
+\author{
+Jirong Yi {\footnote{
+Department of Electrical and Computer Engineering, University of Iowa, Iowa City, IA 52242. Corresponding email: jirong-yi@uiowa.edu.}}\,}\,
+
+
+%\textsuperscript{c}\thanks{\noindent\textsuperscript{c}Department of Electrical and Computer Engineering, University of Iowa, Iowa City, IA 52242. \\
+%Email: \texttt{weiyu-xu@uiowa.edu}}
+%}
+
+\maketitle
+
+
+%Keywords: parameter estimation, the Cram\'{e}r-Rao bound (CRB), the Chapman-Robbins bound, information theory, polling, heterogeneous data.
+
+\section{20200910}\label{20200910}
+
+We incorporate the following updates
+\begin{itemize}
+	\item flexible window size
+	
+	\item 
+\end{itemize}
+
+
+\section{title}
+
+
+
+\end{document}
