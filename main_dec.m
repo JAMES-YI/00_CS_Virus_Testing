@@ -82,23 +82,36 @@ clc; clear;
 
 % Manual setup
 
-Params.posNumPrior = 0; % 1 (only one is positive) or 0 (not specify the number of positives)
+Params.posNumPrior = 0; % 1 (only one is positive) or 0 (not specify the number of positives); default 0
 Params.logStatus = 'off'; % 'on' or 'off'
 Params.ctValType = 'all'; % 'primary' (use only the first group of data) or 'secondary' (use only the duplicate data) or 'all' (use both the first and duplicate data)
 Params.solver = 'EXHAUSTIVE'; % 'EXHAUSTIVE', 'OBO_MM', 'MISMATCHRATIO_SUCC'
-Params.virusID = 'MHV1_2'; % 'MHV1', or 'COVID-19', or 'MHV1_2'
+Params.virusID = 'MHV1'; % 'MHV1', or 'COVID-19', or 'MHV1_2'
 Params.tmStamp = datestr(now,'yyyymmddHHMM');
 Params.dfNameExhaustiveData = sprintf('ExhaustiveData%s.mat',Params.tmStamp);
 % Params.excelID = sprintf('Data/16x40 Results Exp 1_updated_prep_%s.xlsx',Params.tmStamp); 
-Params.MatSize = [5,31];
-Params.exhaustMaxIterSucc = 1; % 100 iterations is too big and numerical issues can occur; 
-Params.MaxIterSucc = 100; % default 100; large value does not bring much benefits; for both the successive mismatch ratio minimization and the successive exhaustive LSQ;
-Params.mismatchratio_norm = 'L2'; % 'L1' or 'L2' or 'L2L1'
-Params.CtValDev = 1; % required for OBO_MM decoding method only; 2 for MHV1l; 0.5 for COVID-19; C:\Users\jiryi.IOWA\Dropbox\CS_Virus_Testing\Codesnoise magnitude in ct value observation; better to keep it below 3
-Params.load2ndStage = 0; % 1 if load second stage data, and 0 if not
-Params.radius = 1; % only used in decoding methods based on grid search;
+Params.MatSize = [3,7];
+
+% Parameters assocated with exhaustive LSQ optimization
 Params.exhaustMode = 'NORMALIZED'; % 'REGULAR', 'NORMALIZED', 'SUCCESSIVE', 'MINPOS'; 
 Params.earlyTolCtVal = 1.5; % should not be too big and recommended to be (0,2]; suggested value 1.5
+Params.exhaustMaxIterSucc = 1; % 100 iterations is too big and numerical issues can occur; 
+
+% Parameters associated with mismatchratio_succ decoding method
+Params.MaxIterSucc = 100; % default 100; large value does not bring much benefits; for both the successive mismatch ratio minimization and the successive exhaustive LSQ;
+Params.mismatchratio_norm = 'L2'; % 'L1' or 'L2' or 'L2L1'
+
+% Parameters associated with one-by-one minimization and maximization
+% deocoding method
+
+Params.CtValDev = 1; % required for OBO_MM decoding method only; 2 for MHV1l; 0.5 for COVID-19; C:\Users\jiryi.IOWA\Dropbox\CS_Virus_Testing\Codesnoise magnitude in ct value observation; better to keep it below 3
+
+% Parameters associated with adaptive request decoding
+Params.load2ndStage = 1; % 1 if load second stage data, and 0 if not
+
+% Parameters associated with exhaustive grid search decoding
+Params.radius = 1; % only used in decoding methods based on grid search;
+
 Params.vloadMin = 1e-5; % minimal virus load achievable by positive samples
 
 %% 
@@ -134,7 +147,6 @@ dataPath.InitInd = 3;
 Params.trialNum = trialNum;
 
 %% Loading data in first stage test
-
 poolset = poolTest(Params);
 poolset = poolset.dataLoader(dataPath,trialNum);
 
@@ -143,7 +155,7 @@ poolset = poolset.updMixMat(dataPath);
 poolset = poolset.updpoolStatus(dataPath);
 
 %% Loading data in the second stage test
-
+% - MHV-1 2 stage 2
 if Params.load2ndStage==1
     
     [poolset, Params] = dataSecStgConfig(poolset,Params);
@@ -184,7 +196,7 @@ end
 
 %% Reports
 
-% resrep_setup(poolset,Params);
+resrep_setup(poolset,Params);
 
 % fprintf('%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d\n',poolset.MixMat)
 
