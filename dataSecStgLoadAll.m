@@ -16,7 +16,8 @@ switch virusID
         % load primary data
         ctValType = 'primary';
         Params.ctValType = ctValType;
-        dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
+        % dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
+        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');
@@ -36,7 +37,8 @@ switch virusID
 
         ctValType = 'secondary';
         Params.ctValType = ctValType;
-        dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
+        % dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
+        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');

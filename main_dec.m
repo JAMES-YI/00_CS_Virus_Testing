@@ -73,7 +73,24 @@
 % - documentation of architecture of the system
 % - architecture optimization
 % - factorization and packing
-% 
+% - filename management for raw data
+%   VIRUSNAME_Trial-#_Stage-#_DataType_CreaterInitial_Datastamp.fileextension
+%   MHV-1_Trial-1_Stage-1_Encoded_KWALDSTEIN_202012291244.xlsx
+%   MHV-1_Trial-1_Stage-2_Encoded_KWALDSTEIN_202012291244.xlsx
+%   MHV-1_Trial-1_Stage-3_Encoded_KWALDSTEIN_202012291244.xlsx
+%   MHV-1_Trial-2_Stage-1_Encoded_KWALDSTEIN_202012291244.xlsx
+%   MHV-1_Trial-2_Stage-2_Encoded_KWALDSTEIN_202012291244.xlsx
+%   COVID-19_Trial-1_Stage-1_Encoded_KWALDSTEIN_202012291244.xlsx
+%   COVID-19_Trial-1_Stage-2_Encoded_KWALDSTEIN_202012291244.xlsx
+% - filename management for results
+%   MHV-1_Trial-1_Stage-1_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-1_Stage-2_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-1_Stage-3_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-2_Stage-1_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-2_Stage-2_Decoded_JYI_202012291244.xlsx
+%   COVID-19_Trial-1_Stage-1_Decoded_JYI_202012291244.xlsx
+%   COVID-19_Trial-1_Stage-2_Decoded_JYI_202012291244.xlsx
+
 %% System Configuration
 % StatusLet: B for A3_7, G for A4_15, L for A5_31
 % CtValLet: C for A3_7, H for A4_15, M for A5_31
@@ -89,8 +106,8 @@ Params.solver = 'EXHAUSTIVE'; % 'EXHAUSTIVE', 'OBO_MM', 'MISMATCHRATIO_SUCC'
 Params.virusID = 'MHV1'; % 'MHV1', or 'COVID-19', or 'MHV1_2'
 Params.tmStamp = datestr(now,'yyyymmddHHMM');
 Params.dfNameExhaustiveData = sprintf('ExhaustiveData%s.mat',Params.tmStamp);
-% Params.excelID = sprintf('Data/16x40 Results Exp 1_updated_prep_%s.xlsx',Params.tmStamp); 
 Params.MatSize = [3,7];
+Params.userID = 'JYI';
 
 % Parameters assocated with exhaustive LSQ optimization
 Params.exhaustMode = 'NORMALIZED'; % 'REGULAR', 'NORMALIZED', 'SUCCESSIVE', 'MINPOS'; 
@@ -108,32 +125,47 @@ Params.CtValDev = 1; % required for OBO_MM decoding method only; 2 for MHV1l; 0.
 
 % Parameters associated with adaptive request decoding
 Params.load2ndStage = 1; % 1 if load second stage data, and 0 if not
+Params.stageNum = 2; % fit to adaptive request decoding scheme; use the results from the first n stages for decoding;
 
 % Parameters associated with exhaustive grid search decoding
 Params.radius = 1; % only used in decoding methods based on grid search;
 
 Params.vloadMin = 1e-5; % minimal virus load achievable by positive samples
 
-%% 
+%% Automatical setup of parameters
+
+% Parameters associated with writing results report
+switch Params.virusID
+    case 'MHV1'
+            
+        Params.optExcelID = sprintf('Data/MHV-1_Trial-1_Stage-%d_Decoded_%s_%s.xlsx',...
+                                    Params.stageNum,Params.userID,Params.tmStamp); 
+                
+            
+    case 'COVID-19'
+    case 'MHV1_2'
+end
+
+%% Configuration for first stage
 switch Params.virusID
     case 'MHV1'
         Params.poolNum = Params.MatSize(1); 
         Params.sampNum = Params.MatSize(2); 
         % Params.dilution = 4; % fold of dilution
-        dataPath.fID = 'Data/MHV1 Pooled Testing Exp 1 Results 082820.xlsx';
+        dataPath.fID = 'Data/MHV-1_Trial-1_Stage-1_Encoded_KWALDSTEIN_202008281139.xlsx';
         
     case 'COVID-19'
          
         Params.poolNum = Params.MatSize(1); 
         Params.sampNum = Params.MatSize(2); 
         % Params.dilution = 10; % fold of dilution; the dilution for each pool can be different
-        dataPath.fID = 'Data/16x40 Results Exp 1_updated_prep.xlsx';
+        dataPath.fID = 'Data/COVID-19_Trial-1_Stage-1_Encoded_KWALDSTEIN_202010281100.xlsx';
         
     case 'MHV1_2'
         Params.poolNum = Params.MatSize(1); 
         Params.sampNum = Params.MatSize(2); 
         % Params.dilution = 4; % fold of dilution
-        dataPath.fID = 'Data/MHV1 Pooled Testing 1percent Experiment 2 Results_prep.xlsx';
+        dataPath.fID = 'Data/MHV-1_Trial-2_Stage-1_Encoded_KWALDSTEIN_202011201614.xlsx';
         
 end
 
@@ -156,8 +188,18 @@ poolset = poolset.updpoolStatus(dataPath);
 
 %% Loading data in the second stage test
 % - MHV-1 2 stage 2
-if Params.load2ndStage==1
+% 
+% Modified by JYI, 12/29/2020
+% - adaptive request decoding, stage by stage data loading and decoding
+% - 
+% 
+
+switch Params.stageNum
     
+    case 2
+    
+    case 3
+    % load all the results from the first 3 stages
     [poolset, Params] = dataSecStgConfig(poolset,Params);
     
 end
@@ -196,7 +238,7 @@ end
 
 %% Reports
 
-resrep_setup(poolset,Params);
+% resrep_setup(poolset,Params);
 
 % fprintf('%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d\n',poolset.MixMat)
 

@@ -9,6 +9,16 @@ function write_results_mhv1_2(Params,poolset)
 %   testing method
 % - write index of potential positive samples to excel for OBO_MM method
 % 
+% Updated by JYI, 12/29/2002
+% - filename management for results
+%   MHV-1_Trial-1_Stage-1_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-1_Stage-2_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-1_Stage-3_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-2_Stage-1_Decoded_JYI_202012291244.xlsx
+%   MHV-1_Trial-2_Stage-2_Decoded_JYI_202012291244.xlsx
+%   COVID-19_Trial-1_Stage-1_Decoded_JYI_202012291244.xlsx
+%   COVID-19_Trial-1_Stage-2_Decoded_JYI_202012291244.xlsx
+% 
 % ToDo
 % - reduce redundancy of codes
 
@@ -17,7 +27,7 @@ function write_results_mhv1_2(Params,poolset)
 Params.optExcelID = sprintf('Data/MHV1 Pooled Testing 1percent Experiment 2 Results_prep_decoded.xlsx');
 
 if ~isfile(Params.optExcelID)
-    copyfile('Data/MHV1 Pooled Testing 1percent Experiment 2 Results_prep_decoded_template.xlsx',Params.optExcelID);
+    copyfile('Data/MHV-1_Trial-1_Stage-1_Decoded_JYI_Template.xlsx',Params.optExcelID);
 end
 
 Params.sheetID = 'Sheet1';

@@ -48,7 +48,7 @@ switch Params.virusID
 
     case 'COVID-19'
 
-        dataSecStgPath.fID = 'Data/16x40 Exp 1 Retest Results_prep.xlsx';
+        dataSecStgPath.fID = 'Data/COVID-19_Trial-1_Stage-2_Encoded_KWALDSTEIN_202011061044.xlsx';
 
         if strcmp(Params.ctValType,'primary')
             dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
@@ -86,6 +86,9 @@ switch Params.virusID
         elseif strcmp(Params.ctValType,'all')
             [poolset,Params] = dataSecStgLoadAll(poolset,Params,dataSecStgPath);
         end
+        
+    case 'MHV1_2'
+        % TBD
 
 
 end
