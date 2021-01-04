@@ -83,14 +83,17 @@ methods
         % Modified by JYI, 10/27/2020
         % - incorporate sensing matrix for COVID-19 constructed from
         %   bipartite graph
-        
+        % 
         % Specify mixing matrix
+        % Updated by JYI, 12/30/2020
+        % - change 'MHV1' to 'MHV-1'
+        % - combine 'MHV1' and 'MHV1_2' into 'MHV-1'
         
         virusID = Params.virusID;
         MatInfo = Params.MatInfo;
         
         switch virusID
-            case 'MHV1'
+            case 'MHV-1'
                 poolset.CtValLb = 12;
                 poolset.CtValUb = 34;
                 switch MatInfo
@@ -127,35 +130,6 @@ methods
                         [poolset.poolNum,poolset.sampNum] = size(poolset.MixMat);
                         
                 end
-            
-            case 'MHV1_2'
-                poolset.CtValLb = 12;
-                poolset.CtValUb = 34;
-                switch MatInfo
-
-                    case '3 by 7'
-                        poolset.MixMat = [1,0,0,1,0,1,1;...
-                                          0,1,0,1,1,1,0;...
-                                          0,0,1,0,1,1,1];
-                        [poolset.poolNum,poolset.sampNum] = size(poolset.MixMat);
-
-                    case '4 by 15'
-                        poolset.MixMat = [1,0,0,0,1,0,0,1,1,0,1,0,1,1,1;...
-                                          0,1,0,0,1,1,0,1,0,1,1,1,1,0,0;...
-                                          0,0,1,0,0,1,1,0,1,0,1,1,1,1,0;...
-                                          0,0,0,1,0,0,1,1,0,1,0,1,1,1,1];
-                        [poolset.poolNum,poolset.sampNum] = size(poolset.MixMat);
-
-                    case '5 by 31'
-                        poolset.MixMat = [1,0,0,0,0,1,0,0,1,0,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,1,0;...
-                                          0,1,0,0,0,0,1,0,0,1,0,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,1;...
-                                          0,0,1,0,0,1,0,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,1,0,1,0,0;...
-                                          0,0,0,1,0,0,1,0,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,1,0,1,0;...
-                                          0,0,0,0,1,0,0,1,0,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,1,1,1,0,1,0,1];
-                        [poolset.poolNum,poolset.sampNum] = size(poolset.MixMat);
-
-                end
-                
         end
         
         
@@ -170,6 +144,8 @@ methods
     function poolset = dataLoader(poolset,dataPath,trialNum)
         
         % Load pool tests status and ct values
+        % ToDo
+        % - Optimize data import and export
         
         fID = dataPath.fID; 
         sheet = dataPath.sheet; 
@@ -248,7 +224,7 @@ methods
        
         for i = 1:poolset.trialNum
             
-            if Params.load2ndStage==1
+            if iscell(poolset.MixMat)
                 [MNeg,MPos,Pos] = pool_dec(poolset.MixMat{i},poolset.poolStatus{i},posNumPrior);
             else
                 [MNeg,MPos,Pos] = pool_dec(poolset.MixMat,poolset.poolStatus{i},posNumPrior);
@@ -285,7 +261,7 @@ methods
         % - the observed ct value will be converted to virus load via
         % ct2vload class which is defined in ct2vload.m
         
-        convertor = ct2vload(Params.virusID);
+        convertor = ct2vload(Params.virusID,Params);
         convertor = convertor.datafit();
         
         for i=1:poolset.trialNum
@@ -330,7 +306,7 @@ methods
         for i=1:poolset.trialNum
             
             fprintf('Trial %d/%d\n',i,poolset.trialNum);
-            if Params.load2ndStage==1
+            if iscell(poolset.MixMat)
                 data.MixMat = poolset.MixMat{i};
             else
                 data.MixMat = poolset.MixMat;
@@ -340,17 +316,21 @@ methods
             % - for MHV1 virus (including MHV1_2 and MHV1), the dilution
             %   for pools with multiple samples is 4 while the dilution for
             %   pools containing only one sample is 1
+            %
+            % Updated by JYI, 12/31/2020
+            % - combine 'MHV1' and 'MHV1_2' into 'MHV-1'
+            
             switch virusID
-                case 'MHV1'
+                case 'MHV-1'
                     dilution = 4*ones(size(data.MixMat,1),1);
                     indOnes = find(sum(data.MixMat,2)==1); % find individual tests
                     dilution(indOnes) = 1;
                 case 'COVID-19'
                     dilution = sum(data.MixMat,2);
-                case 'MHV1_2'
-                    dilution = 4*ones(size(data.MixMat,1),1);
-                    indOnes = find(sum(data.MixMat,2)==1); % find individual tests
-                    dilution(indOnes) = 1;
+%                 case 'MHV1_2'
+%                     dilution = 4*ones(size(data.MixMat,1),1);
+%                     indOnes = find(sum(data.MixMat,2)==1); % find individual tests
+%                     dilution(indOnes) = 1;
             end
             
             Params.dilution = dilution;

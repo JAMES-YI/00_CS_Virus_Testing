@@ -213,7 +213,7 @@ for spst = 1:maxSpst
         vloadTmp = zeros(sampNum,1);
         vloadTmp(supp,:) = vloadSub;
 
-        convertor = vload2ct(Params.virusID);
+        convertor = vload2ct(Params.virusID,Params);
         convertor = convertor.datafit();
         ctVal = convertor.ctVal_prd(MixMat*vloadTmp);
 
@@ -244,8 +244,10 @@ for spst = 1:maxSpst
 %         end
     end
     
-    if prod(ctValResEle)==1
-            break;
+    if exist('ctValResEle','var')
+        if prod(ctValResEle)==1
+                break;
+        end
     end
     
 end

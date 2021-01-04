@@ -5,6 +5,9 @@ function [poolset,Params] = dataSecStgLoadAll(poolset,Params,dataSecStgPath)
 % 
 % Updated by JYI, 11/06/2020
 % - incorporate COVID-19 retest data
+%
+% Updated by JYI, 01/01/2021
+% - change 'MHV1' to 'MHV-1'
 % 
 %%
 
@@ -12,7 +15,7 @@ MatInfo = Params.MatInfo;
 virusID = Params.virusID; 
 
 switch virusID
-    case 'MHV1'
+    case 'MHV-1'
         % load primary data
         ctValType = 'primary';
         Params.ctValType = ctValType;
@@ -58,7 +61,7 @@ switch virusID
         % load primary data
         ctValType = 'primary';
         Params.ctValType = ctValType;
-        dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
+        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');
@@ -78,7 +81,7 @@ switch virusID
 
         ctValType = 'secondary';
         Params.ctValType = ctValType;
-        dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
+        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');

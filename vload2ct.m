@@ -39,6 +39,7 @@ properties(SetAccess=private)
     vload;
     virusID; 
     func_fit = 0;
+    Params;
 
 end
 
@@ -46,11 +47,12 @@ end
 
 methods
     
-    function convertor = vload2ct(virusID)
+    function convertor = vload2ct(virusID,Params)
         % Constructor
         % virusID: 'MHV1', or 'COVID-19', or 'MHV1_2'
         
         convertor.virusID = virusID;
+        convertor.Params = Params;
         convertor = setStdCurveData(convertor);
 
     end
@@ -69,22 +71,43 @@ methods
         %   ctRg2 = 'AO19:AO32';
         %   vlRg2 = 'AQ19:AQ32';
         %
-        % Modified by JYI, 11/03/2020
+        % Updated by JYI, 11/03/2020
         % - incoporate standard curve data for COVID-19
         % 
+        % Updated by JYI, 12/31/2020
+        % - combine 'MHV1' and 'MHV1_2' into 'MHV-1'
         %%
         
         switch convertor.virusID
-            case 'MHV1'
-                fID = 'Data/MHV1 Pooled Testing Exp 1 Decoded Results with Actual_with_new_standard_curve.xlsx';
-                stID = 'Sheet1';
-                ctRg1 = 'AL19:AL26';
-                %ctRg2 = 'AO19:AO32';
-                vlRg1 = 'AI19:AI26';
-                %vlRg2 = 'AQ19:AQ32';
+            case 'MHV-1'
+                
+                if convertor.Params.trialInd==1
+                    
+                    fID = sprintf('Data/MHV-1_Trial-1_Stage-%d_StdCurve_KWALDSTEIN_202010042110.xlsx',...
+                        convertor.Params.stageNum);
+                    stID = 'Sheet1';
+                    ctRg1 = 'AL19:AL26';
+                    %ctRg2 = 'AO19:AO32';
+                    vlRg1 = 'AI19:AI26';
+                    %vlRg2 = 'AQ19:AQ32';
 
-                ctRg3 = 'AK19:AK26';
-                vlRg3 = 'AI19:AI26';
+                    ctRg3 = 'AK19:AK26';
+                    vlRg3 = 'AI19:AI26';
+                    
+                elseif convertor.Params.trialInd==2
+                    
+                    fID = sprintf('Data/MHV-1_Trial-2_Stage-%d_StdCurve_KWALDSTEIN_202011201614.xlsx',...
+                        convertor.Params.stageNum);
+                    stID = 'Sheet1';
+                    ctRg1 = 'Q2:Q9';
+                    %ctRg2 = 'AO19:AO32';
+                    vlRg1 = 'O2:O9';
+                    %vlRg2 = 'AQ19:AQ32';
+
+                    ctRg3 = 'R2:R9';
+                    vlRg3 = 'O2:O9';
+                    
+                end
 
                 ctVal1 = xlsread(fID,stID,ctRg1);
                 % ctVal2 = xlsread(fID,stID,ctRg2);
@@ -99,7 +122,8 @@ methods
                 % convertor.vload = [vload1; vload2; vload3]';
                 
             case 'COVID-19'
-                fID = 'Data/16x40 Results Exp 1_updated_prep.xlsx';
+                fID = sprintf('Data/COVID-19_Trial-1_Stage-%d_StdCurve_KWALDSTEIN_202010281100.xlsx',...
+                        convertor.Params.stageNum);
                 stID = 'Sheet1';
                 
                 ctRg1 = 'E24:E35';
@@ -115,28 +139,28 @@ methods
                 vload2 = xlsread(fID,stID,vlRg2);
                 convertor.vload = [vload1; vload2]';
                 
-            case 'MHV1_2'
-                fID = 'Data/MHV1 Pooled Testing 1percent Experiment 2 Results_prep.xlsx';
-                stID = 'Sheet1';
-                ctRg1 = 'Q2:Q9';
-                %ctRg2 = 'AO19:AO32';
-                vlRg1 = 'O2:O9';
-                %vlRg2 = 'AQ19:AQ32';
-
-                ctRg3 = 'R2:R9';
-                vlRg3 = 'O2:O9';
-
-                ctVal1 = xlsread(fID,stID,ctRg1);
-                % ctVal2 = xlsread(fID,stID,ctRg2);
-                ctVal3 = xlsread(fID,stID,ctRg3);
-                convertor.ctVal = [ctVal1; ctVal3]';
-                % convertor.ctVal = [ctVal1; ctVal2; ctVal3]';
-
-                vload1 = xlsread(fID,stID,vlRg1);
-                % vload2 = xlsread(fID,stID,vlRg2);
-                vload3 = xlsread(fID,stID,vlRg3);
-                convertor.vload = [vload1; vload3]';
-                % convertor.vload = [vload1; vload2; vload3]';
+%             case 'MHV1_2'
+%                 fID = 'Data/MHV1 Pooled Testing 1percent Experiment 2 Results_prep.xlsx';
+%                 stID = 'Sheet1';
+%                 ctRg1 = 'Q2:Q9';
+%                 %ctRg2 = 'AO19:AO32';
+%                 vlRg1 = 'O2:O9';
+%                 %vlRg2 = 'AQ19:AQ32';
+% 
+%                 ctRg3 = 'R2:R9';
+%                 vlRg3 = 'O2:O9';
+% 
+%                 ctVal1 = xlsread(fID,stID,ctRg1);
+%                 % ctVal2 = xlsread(fID,stID,ctRg2);
+%                 ctVal3 = xlsread(fID,stID,ctRg3);
+%                 convertor.ctVal = [ctVal1; ctVal3]';
+%                 % convertor.ctVal = [ctVal1; ctVal2; ctVal3]';
+% 
+%                 vload1 = xlsread(fID,stID,vlRg1);
+%                 % vload2 = xlsread(fID,stID,vlRg2);
+%                 vload3 = xlsread(fID,stID,vlRg3);
+%                 convertor.vload = [vload1; vload3]';
+%                 % convertor.vload = [vload1; vload2; vload3]';
         end
     
     end

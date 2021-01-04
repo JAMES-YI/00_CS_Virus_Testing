@@ -32,6 +32,9 @@ classdef ct2vload
 % - the new data should be used independently rather than combined with
 %   data from previous MHV1 experiments
 % 
+% Updated by JYI, 12/29/2020
+% - combine 'MHV1' and 'MHV1_2' into 'MHV-1'
+% 
 % 
 %% Properties
 properties(SetAccess=private)
@@ -46,6 +49,7 @@ properties(SetAccess=private)
     vload;
     virusID;
     func_fit = 0;
+    Params
 
 end
 
@@ -54,12 +58,13 @@ end
 
 methods
     
-    function convertor = ct2vload(virusID)
+    function convertor = ct2vload(virusID,Params)
         % Constructor
         % - virusID: 'MHV1', or 'COVID-19'
         %
         
         convertor.virusID = virusID;
+        convertor.Params = Params;
         convertor = setStdCurveData(convertor);
         
     end
@@ -80,16 +85,36 @@ methods
         %%
         
         switch convertor.virusID
-            case 'MHV1'
-                fID = 'Data/MHV1 Pooled Testing Exp 1 Decoded Results with Actual_with_new_standard_curve.xlsx';
-                stID = 'Sheet1';
-                ctRg1 = 'AL19:AL26';
-                % ctRg2 = 'AO19:AO32';
-                vlRg1 = 'AI19:AI26';
-                % vlRg2 = 'AQ19:AQ32';
+            case 'MHV-1'
+                
+                if convertor.Params.trialInd==1
+                    fID = sprintf('Data/MHV-1_Trial-1_Stage-%d_StdCurve_KWALDSTEIN_202010042110.xlsx',...
+                        convertor.Params.stageNum);
+                    stID = 'Sheet1';
+                    ctRg1 = 'AL19:AL26';
+                    % ctRg2 = 'AO19:AO32';
+                    vlRg1 = 'AI19:AI26';
+                    % vlRg2 = 'AQ19:AQ32';
 
-                ctRg3 = 'AK19:AK26';
-                vlRg3 = 'AI19:AI26';
+                    ctRg3 = 'AK19:AK26';
+                    vlRg3 = 'AI19:AI26';
+                    
+                elseif convertor.Params.trialInd==2
+                    
+                    fID = sprintf('Data/MHV-1_Trial-2_Stage-%d_StdCurve_KWALDSTEIN_202011201614.xlsx',...
+                        convertor.Params.stageNum);
+                    stID = 'Sheet1';
+                    ctRg1 = 'Q2:Q9';
+                    % ctRg2 = 'AO19:AO32';
+                    vlRg1 = 'O2:O9';
+                    % vlRg2 = 'AQ19:AQ32';
+
+                    ctRg3 = 'R2:R9';
+                    vlRg3 = 'O2:O9';
+                    
+                else
+                    error('Params.trialInd can be at most 2 for MHV-1.\n')
+                end
 
 
                 ctVal1 = xlsread(fID,stID,ctRg1);
@@ -105,46 +130,32 @@ methods
                 % convertor.vload = [vload1; vload2; vload3]';
                 
             case 'COVID-19'
-                fID = 'Data/16x40 Results Exp 1_updated_prep.xlsx';
-                stID = 'Sheet1';
                 
-                ctRg1 = 'E24:E35';
-                ctRg2 = 'F24:F35';
-                vlRg1 = 'D24:D35';
-                vlRg2 = 'D24:D35';
-                
-                ctVal1 = xlsread(fID,stID,ctRg1);
-                ctVal2 = xlsread(fID,stID,ctRg2);
-                convertor.ctVal = [ctVal1; ctVal2]';
-                
-                vload1 = xlsread(fID,stID,vlRg1);
-                vload2 = xlsread(fID,stID,vlRg2);
-                convertor.vload = [vload1; vload2]';
-                
-            case 'MHV1_2'
-                
-                fID = 'Data/MHV1 Pooled Testing 1percent Experiment 2 Results_prep.xlsx';
-                stID = 'Sheet1';
-                ctRg1 = 'Q2:Q9';
-                % ctRg2 = 'AO19:AO32';
-                vlRg1 = 'O2:O9';
-                % vlRg2 = 'AQ19:AQ32';
+                if convertor.Params.trialInd==1
+                    
+                    fID = sprintf('Data/COVID-19_Trial-1_Stage-%d_StdCurve_KWALDSTEIN_202010281100.xlsx',...
+                        convertor.Params.stageNum);
+                    
+                    stID = 'Sheet1';
 
-                ctRg3 = 'R2:R9';
-                vlRg3 = 'O2:O9';
+                    ctRg1 = 'E24:E35';
+                    ctRg2 = 'F24:F35';
+                    vlRg1 = 'D24:D35';
+                    vlRg2 = 'D24:D35';
 
+                    ctVal1 = xlsread(fID,stID,ctRg1);
+                    ctVal2 = xlsread(fID,stID,ctRg2);
+                    convertor.ctVal = [ctVal1; ctVal2]';
 
-                ctVal1 = xlsread(fID,stID,ctRg1);
-                % ctVal2 = xlsread(fID,stID,ctRg2);
-                ctVal3 = xlsread(fID,stID,ctRg3);
-                convertor.ctVal = [ctVal1; ctVal3]';
-                % convertor.ctVal = [ctVal1; ctVal2; ctVal3]';
+                    vload1 = xlsread(fID,stID,vlRg1);
+                    vload2 = xlsread(fID,stID,vlRg2);
+                    convertor.vload = [vload1; vload2]';
+                else
+                    error('Params.trialInd can be at most 1 for COVID-19.\n')
+                end
+                
 
-                vload1 = xlsread(fID,stID,vlRg1);
-                % vload2 = xlsread(fID,stID,vlRg2);
-                vload3 = xlsread(fID,stID,vlRg3);
-                convertor.vload = [vload1; vload3]';
-                % convertor.vload = [vload1; vload2; vload3]';
+          
                 
         end
     end

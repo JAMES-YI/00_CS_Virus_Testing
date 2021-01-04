@@ -62,7 +62,7 @@ sampNum = poolset.sampNum;
 
 %% Virus load bounds computation
 
-convertor = ct2vload(Params.virusID);
+convertor = ct2vload(Params.virusID,Params);
 convertor = convertor.datafit();
 
 for i=1:trialNum
@@ -90,7 +90,7 @@ for iTrial=1:trialNum
     xLbTmp = zeros(sampNum,1);
     xUbTmp = zeros(sampNum,1); 
     
-    if Params.load2ndStage==1
+    if iscell(poolset.MixMat)
         MixMat = poolset.MixMat{iTrial};
     else
         MixMat = poolset.MixMat;

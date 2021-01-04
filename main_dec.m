@@ -1,5 +1,14 @@
+function poolset = main_dec(config)
+
 % This file is to decode pooled sample results to obtain individual sample
 % results.
+% 
+% - config contains the following fileds
+%   config.MatSize
+%   config.solver
+%   config.virusID
+%   config.stageNum
+%   config.trialInd
 %
 % Params.solver can be any one of the following. Each one of them requires
 % the dilution parameter
@@ -94,99 +103,109 @@
 %% System Configuration
 % StatusLet: B for A3_7, G for A4_15, L for A5_31
 % CtValLet: C for A3_7, H for A4_15, M for A5_31
+% - you may need to setup the following parameters
+%   Params.MatSize
+%   Params.solver
+%   Params.virusID
+%   Params.stageNum
+%   Params.trialInd
 
-clc; clear;  
-
-% Manual setup
-
+ 
 Params.posNumPrior = 0; % 1 (only one is positive) or 0 (not specify the number of positives); default 0
-Params.logStatus = 'off'; % 'on' or 'off'
-Params.ctValType = 'all'; % 'primary' (use only the first group of data) or 'secondary' (use only the duplicate data) or 'all' (use both the first and duplicate data)
-Params.solver = 'EXHAUSTIVE'; % 'EXHAUSTIVE', 'OBO_MM', 'MISMATCHRATIO_SUCC'
-Params.virusID = 'MHV1'; % 'MHV1', or 'COVID-19', or 'MHV1_2'
+
+% Parameters associated with I/O and data
+Params.logStatus = 'off'; % 'on' or 'off'; default 'off'
 Params.tmStamp = datestr(now,'yyyymmddHHMM');
 Params.dfNameExhaustiveData = sprintf('ExhaustiveData%s.mat',Params.tmStamp);
-Params.MatSize = [3,7];
+Params.ctValType = 'all'; % 'primary' (use only the first group of data) or 
+% 'secondary' (use only the duplicate data) or 'all' (use both the first
+% and duplicate data); default 'all'
+Params.MatSize = config.MatSize; % size of participation matrix in {0,1}^{n,N}; [3,7], [4,15], or [5,31] for MHV-1;
+% [16,40] for COVID-19
 Params.userID = 'JYI';
+Params.vloadMin = 1e-6; % minimal virus load achievable by positive samples; recommended to be 1e-7
 
 % Parameters assocated with exhaustive LSQ optimization
-Params.exhaustMode = 'NORMALIZED'; % 'REGULAR', 'NORMALIZED', 'SUCCESSIVE', 'MINPOS'; 
-Params.earlyTolCtVal = 1.5; % should not be too big and recommended to be (0,2]; suggested value 1.5
-Params.exhaustMaxIterSucc = 1; % 100 iterations is too big and numerical issues can occur; 
 
-% Parameters associated with mismatchratio_succ decoding method
-Params.MaxIterSucc = 100; % default 100; large value does not bring much benefits; for both the successive mismatch ratio minimization and the successive exhaustive LSQ;
-Params.mismatchratio_norm = 'L2'; % 'L1' or 'L2' or 'L2L1'
 
-% Parameters associated with one-by-one minimization and maximization
-% deocoding method
+% Parameters associated with optimizer
+Params.solver = config.solver; % 'EXHAUSTIVE', 'OBO_MM', 'MISMATCHRATIO_SUCC'
+Params.MaxIterSucc = 100; % for 'MISMATCHRATIO_SUCC' only; default 100; large value does not bring much benefits; 
+Params.mismatchratio_norm = 'L2'; % for 'MISMATCHRATIO_SUCC' only; 'L1' or 'L2' or 'L2L1'
+% - 'EXHAUSTIVE' solver
+Params.exhaustMode = 'NORMALIZED'; % for 'EXHAUSTIVE' solver only; 'REGULAR', 'NORMALIZED', 'SUCCESSIVE', or 'MINPOS'; default 'NORMALIZED' 
+Params.earlyTolCtVal = 1.5; % for 'EXHAUSTIVE' solver only; should not be too big or too small; recommended to be (0.5,2]; default 1.5
+Params.exhaustMaxIterSucc = 1; % for 'EXHAUSTIVE' solver in 'SUCCESSIVE' mode only; 
+% 100 iterations is too big and numerical issues can occur; default 1
 
-Params.CtValDev = 1; % required for OBO_MM decoding method only; 2 for MHV1l; 0.5 for COVID-19; C:\Users\jiryi.IOWA\Dropbox\CS_Virus_Testing\Codesnoise magnitude in ct value observation; better to keep it below 3
-
-% Parameters associated with adaptive request decoding
-Params.load2ndStage = 1; % 1 if load second stage data, and 0 if not
-Params.stageNum = 2; % fit to adaptive request decoding scheme; use the results from the first n stages for decoding;
-
-% Parameters associated with exhaustive grid search decoding
+% - 'OBO_MM' solver
+Params.CtValDev = 1.5; % required for OBO_MM decoding method only; 
+% better to keep it below 2; suggested value 1.5 for MHV-l and COVID-19; noise magnitude in ct value observation; 
+% - solvers based on grid search
 Params.radius = 1; % only used in decoding methods based on grid search;
 
-Params.vloadMin = 1e-5; % minimal virus load achievable by positive samples
+% Parameters associated with virus
+Params.virusID = config.virusID; % 'MHV-1', or 'COVID-19'
+Params.trialInd = config.trialInd; % index of the independent experiments to consider; each independent experiment contains
+% results from the {stage 1, stage 2, ...} if adaptive request decoding is
+% performed; trialInd (which is actually the number of experiments) 
+% and the trialNum (which is actually the number of runs) are completely different;
+% totally 2 independent trial experiments are conducted for
+% MHV-1; totally 1 independent trial experiment is done for COVID-19
+Params.stageNum = config.stageNum; % fit to adaptive request decoding scheme; 
+% use the results from the first n stages for decoding; 
+% maximal value for MHV-1 is 3 in trail 1; maximal value for MHV-1 is 2 in
+% trial 2;
+% maximal value for COVID-19 is 2 in trial 1;
 
 %% Automatical setup of parameters
-
 % Parameters associated with writing results report
-switch Params.virusID
-    case 'MHV1'
-            
-        Params.optExcelID = sprintf('Data/MHV-1_Trial-1_Stage-%d_Decoded_%s_%s.xlsx',...
-                                    Params.stageNum,Params.userID,Params.tmStamp); 
-                
-            
-    case 'COVID-19'
-    case 'MHV1_2'
-end
+% ToDo: COVID-19 case
 
-%% Configuration for first stage
+Params.optExcelID = sprintf('Data/%s_Trial-%d_Stage-%d_Decoded_%s.xlsx',...
+                            Params.virusID,Params.trialInd,Params.stageNum,Params.userID); 
+
+%% Load data from first stage or inital request
+
+Params.poolNum = Params.MatSize(1); 
+Params.sampNum = Params.MatSize(2); 
+
 switch Params.virusID
-    case 'MHV1'
-        Params.poolNum = Params.MatSize(1); 
-        Params.sampNum = Params.MatSize(2); 
+    case 'MHV-1'
+        % totally two trials for MHV-1
         % Params.dilution = 4; % fold of dilution
-        dataPath.fID = 'Data/MHV-1_Trial-1_Stage-1_Encoded_KWALDSTEIN_202008281139.xlsx';
+        
+        if Params.trialInd==1
+            dataPath.fID = 'Data/MHV-1_Trial-1_Stage-1_Encoded_KWALDSTEIN_202010042110.xlsx';
+        elseif Params.trialInd==2
+            dataPath.fID = 'Data/MHV-1_Trial-2_Stage-1_Encoded_KWALDSTEIN_202011201614.xlsx';
+        else
+            error('Params.trialInd can be at most 2 for MHV-1.');
+        end
         
     case 'COVID-19'
          
-        Params.poolNum = Params.MatSize(1); 
-        Params.sampNum = Params.MatSize(2); 
         % Params.dilution = 10; % fold of dilution; the dilution for each pool can be different
-        dataPath.fID = 'Data/COVID-19_Trial-1_Stage-1_Encoded_KWALDSTEIN_202010281100.xlsx';
-        
-    case 'MHV1_2'
-        Params.poolNum = Params.MatSize(1); 
-        Params.sampNum = Params.MatSize(2); 
-        % Params.dilution = 4; % fold of dilution
-        dataPath.fID = 'Data/MHV-1_Trial-2_Stage-1_Encoded_KWALDSTEIN_202011201614.xlsx';
+        if Params.trialInd==1
+            dataPath.fID = 'Data/COVID-19_Trial-1_Stage-1_Encoded_KWALDSTEIN_202010281100.xlsx';
+        else
+            error('Params.trialInd can be at most 2 for COVID-19.');
+        end
         
 end
 
 Params.MatInfo = sprintf('%d by %d',Params.poolNum,Params.sampNum);
+[dataPath,Params] = dataPathSetup(dataPath,Params);
 
-dataPath.sheet = 'Sheet1'; 
-dataPath.InitInd = 3;
-
-% Automatic setup
-[dataPath,trialNum] = dataPathSetup(dataPath,Params);
-Params.trialNum = trialNum;
-
-%% Loading data in first stage test
+% Loading data in first stage test
 poolset = poolTest(Params);
-poolset = poolset.dataLoader(dataPath,trialNum);
+poolset = poolset.dataLoader(dataPath,Params.trialNum);
 
-%% Concatenate data from the same stage but different groups
+% Concatenate data from the same stage but different groups if Params.ctValType = 'all'
 poolset = poolset.updMixMat(dataPath);
 poolset = poolset.updpoolStatus(dataPath);
 
-%% Loading data in the second stage test
+%% Loading data in the subsquent stage test
 % - MHV-1 2 stage 2
 % 
 % Modified by JYI, 12/29/2020
@@ -194,15 +213,21 @@ poolset = poolset.updpoolStatus(dataPath);
 % - 
 % 
 
-switch Params.stageNum
-    
-    case 2
-    
-    case 3
-    % load all the results from the first 3 stages
-    [poolset, Params] = dataSecStgConfig(poolset,Params);
-    
+% load the first Params.stageNum stage results
+if Params.stageNum > 1
+    subseqDataLoader = AdReqDataLoader(Params);
+
+    for i=2:Params.stageNum
+
+        dataPath = subseqDataLoader.config(i);
+        poolset = subseqDataLoader.load(poolset,dataPath);
+
+    end
 end
+   
+    % load all the results from the first 3 stages
+    % [poolset, Params] = dataSecStgConfig(poolset,Params);
+
 %% Qualitative decoding 
 
 poolset = poolset.status_dec(Params,Params.posNumPrior);
@@ -222,18 +247,17 @@ else
 end
 
 %% Write results to excels
+fprintf('Writing data to excel sheets...\n');
 switch Params.virusID
     
-    case 'MHV1'
+    case 'MHV-1'
         
-        Params.optExcelID = 'a';
+        ResDataExporter(Params,poolset);
         
     case 'COVID-19'
         
-    case 'MHV1_2'
-        
-        write_results_mhv1_2(Params,poolset);
-        
+        ResDataExporter(Params,poolset);
+     
 end
 
 %% Reports
@@ -242,3 +266,4 @@ end
 
 % fprintf('%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d&%d\n',poolset.MixMat)
 
+end

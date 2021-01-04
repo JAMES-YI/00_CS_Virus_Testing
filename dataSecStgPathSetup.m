@@ -12,8 +12,8 @@ function dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params)
 % - dataSecStgPath
 %
 % TBD
-% - use different group of ct values; (1) main group; (2) duplicated group;
-% (3) both the main and duplicated group;
+% - use different group of ct values; (1) main group, 'primary'; (2) duplicated group, 'secondary';
+% (3) both the main and duplicated group, 'all';
 %
 % Created by JYI, 09/04/2020.
 %
