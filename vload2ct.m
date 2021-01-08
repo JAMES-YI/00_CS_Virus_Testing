@@ -175,7 +175,7 @@ methods
     
     function ctVal = ctVal_prd(convertor,vload)
         % Predict the virus load for given ct values
-        % - truncate ctVal into range [10,40]
+        % - truncate ctVal into range [10,50]
         
         ctVal = convertor.func_fit(log10(vload));
         ctVal = max(10,min(ctVal,40));

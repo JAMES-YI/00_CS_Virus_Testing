@@ -60,6 +60,7 @@ properties(SetAccess=public)
     sampCsPos; % cell array; index set of samples; subset of the union of sampMPos and sampPos 
     sampCsMNeg; % cell array; index set of samples which must be negative; the same as sampMNeg; 
     
+    % One-by-one minimization and maximization decoding
     VloadLb;
     VloadUb; 
     CtValLb; 
@@ -221,6 +222,16 @@ methods
         % - fix bugs when only one stage testing data is used for decoding
         %
         
+        switch posNumPrior
+
+            case 0
+                fprintf('Decoding pool results without knowing the number of positives individual samples...\n');
+
+            case 1
+                fprintf('Decoding pool results with 1 positive individual sample...\n');
+
+        end
+        
        
         for i = 1:poolset.trialNum
             
@@ -345,7 +356,7 @@ methods
                     data.poolVload = poolset.poolVload{i};
                     data.sampNum = pooset.sampNum;
                     vload = poolset.L1_MIN(data,Params);
-                    
+                
                 case 'LSQ_ANA'
                     % Based on LSQ, but we solve for the solution via
                     % analytic form
@@ -420,10 +431,14 @@ methods
                     vload = mismatchratio_pgd(data,Params);
                     
                 case 'MISMATCHRATIO_SUCC'
+                    % ToDo
                     
                     data.sampNum = poolset.sampNum; 
                     data.sampMPos = poolset.sampMPos{i};
                     data.poolVload = poolset.poolVload{i};
+                    data.sampMNeg = poolset.sampMNeg{i};
+                    data.sampMPos = poolset.sampMPos{i};
+                    data.sampPos = poolset.sampPos{i};
                     vload = mismatchratio_succ(data,Params);
                     
                 case 'MISMATCH'
@@ -436,6 +451,8 @@ methods
                 case 'EXHAUSTIVE'
                     % Modified by JYI, 11/02/2020
                     % - allow the use of group testing results
+                    % ToDo
+                    
                     
                     fprintf('Performing exhaustive decoding...\n');
                     
@@ -463,10 +480,11 @@ methods
                 %   sampCsPos; % cell array; index set of samples; subset of the union of sampMPos and sampPos 
                 %   sampCsMNeg; % cell array; index set of samples which must be negative; the same as sampMNeg;
                 %   results from group testing are required
-                poolset.sampVload{i} = vload;
                 
+                poolset.sampVload{i} = vload;
                 poolset.sampCsMPos{i} = find(vload>Params.vloadMin);
                 poolset.sampCsPos{i} = setdiff(poolset.sampCsPos{i},poolset.sampCsMPos{i});
+
             end
             
         end

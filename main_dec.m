@@ -109,40 +109,27 @@ function poolset = main_dec(config)
 %   Params.virusID
 %   Params.stageNum
 %   Params.trialInd
+% system('taskkill /F /IM EXCEL.EXE');
 
  
 Params.posNumPrior = 0; % 1 (only one is positive) or 0 (not specify the number of positives); default 0
 
 % Parameters associated with I/O and data
-Params.logStatus = 'off'; % 'on' or 'off'; default 'off'
 Params.tmStamp = datestr(now,'yyyymmddHHMM');
 Params.dfNameExhaustiveData = sprintf('ExhaustiveData%s.mat',Params.tmStamp);
-Params.ctValType = 'all'; % 'primary' (use only the first group of data) or 
+Params.ctValType = 'primary'; % 'primary' (use only the first group of data) or 
 % 'secondary' (use only the duplicate data) or 'all' (use both the first
 % and duplicate data); default 'all'
 Params.MatSize = config.MatSize; % size of participation matrix in {0,1}^{n,N}; [3,7], [4,15], or [5,31] for MHV-1;
 % [16,40] for COVID-19
 Params.userID = 'JYI';
 Params.vloadMin = 1e-6; % minimal virus load achievable by positive samples; recommended to be 1e-7
-
-% Parameters assocated with exhaustive LSQ optimization
-
-
 % Parameters associated with optimizer
 Params.solver = config.solver; % 'EXHAUSTIVE', 'OBO_MM', 'MISMATCHRATIO_SUCC'
-Params.MaxIterSucc = 100; % for 'MISMATCHRATIO_SUCC' only; default 100; large value does not bring much benefits; 
 Params.mismatchratio_norm = 'L2'; % for 'MISMATCHRATIO_SUCC' only; 'L1' or 'L2' or 'L2L1'
 % - 'EXHAUSTIVE' solver
 Params.exhaustMode = 'NORMALIZED'; % for 'EXHAUSTIVE' solver only; 'REGULAR', 'NORMALIZED', 'SUCCESSIVE', or 'MINPOS'; default 'NORMALIZED' 
 Params.earlyTolCtVal = 1.5; % for 'EXHAUSTIVE' solver only; should not be too big or too small; recommended to be (0.5,2]; default 1.5
-Params.exhaustMaxIterSucc = 1; % for 'EXHAUSTIVE' solver in 'SUCCESSIVE' mode only; 
-% 100 iterations is too big and numerical issues can occur; default 1
-
-% - 'OBO_MM' solver
-Params.CtValDev = 1.5; % required for OBO_MM decoding method only; 
-% better to keep it below 2; suggested value 1.5 for MHV-l and COVID-19; noise magnitude in ct value observation; 
-% - solvers based on grid search
-Params.radius = 1; % only used in decoding methods based on grid search;
 
 % Parameters associated with virus
 Params.virusID = config.virusID; % 'MHV-1', or 'COVID-19'
@@ -157,6 +144,33 @@ Params.stageNum = config.stageNum; % fit to adaptive request decoding scheme;
 % maximal value for MHV-1 is 3 in trail 1; maximal value for MHV-1 is 2 in
 % trial 2;
 % maximal value for COVID-19 is 2 in trial 1;
+
+% - 'OBO_MM' solver
+% better to keep it below 2; suggested value 1.5 for MHV-l and COVID-19; noise magnitude in ct value observation; 
+
+switch Params.virusID
+    case 'MHV-1'
+        Params.CtValDev = 2.5; % required for OBO_MM decoding method only; 
+        % suggested to be in [2,3.5]; default value 2.5; too small
+        % value will lead to infeasibility, while too large value will
+        % lead to loose estimate
+        Params.exhaustMaxIterSucc = 1; % for 'EXHAUSTIVE' solver in 'SUCCESSIVE' mode only; 
+        % 100 iterations is too big and numerical issues can occur; default 1
+        Params.MaxIterSucc = 50; % for 'MISMATCHRATIO_SUCC' only; 
+        % default 50; number of iterations for successive mismatch ratio minimization does 
+        % not affect much the estimation, i.e., 1 and 100 can achive
+        % comparable results; by the define condition for convergence,
+        % the algorithm usually converges in roughly 10 iterations
+    case 'COVID-19'
+        Params.CtValDev = 2;
+        Params.exhaustMaxIterSucc = 1; % for 'EXHAUSTIVE' solver in 'SUCCESSIVE' mode only; 
+        % 100 iterations is too big and numerical issues can occur; default 1
+        Params.MaxIterSucc = 50; % for 'MISMATCHRATIO_SUCC' only; 
+            % default 100; large value does not bring much benefits; 
+end
+
+% - solvers based on grid search
+Params.radius = 1; % only used in decoding methods based on grid search;
 
 %% Automatical setup of parameters
 % Parameters associated with writing results report

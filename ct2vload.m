@@ -176,7 +176,7 @@ methods
         % - if ct Value greater than 50, set the virus load to be 0;
         %   
         
-        samInd = find(ctVal<=50);
+        samInd = find(ctVal<50);
         ctSam = ctVal(samInd);
         vload = zeros(size(ctVal)); 
         

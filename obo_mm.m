@@ -103,7 +103,7 @@ for iTrial=1:trialNum
 
     
     for iSamp=1:sampNum
-        fprintf('%d/%d sample\n',iSamp,sampNum);
+        % fprintf('%d/%d sample\n',iSamp,sampNum);
         % minimization
         cvx_begin quiet
             variable x(sampNum,1)

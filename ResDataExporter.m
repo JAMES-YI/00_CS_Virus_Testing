@@ -317,9 +317,6 @@ switch Params.virusID
 
         end
         
-        fprintf('Data has been saved in %s.\n',Params.optExcelID);
-
-    
     %%
     case 'COVID-19'
         if ~isfile(Params.optExcelID)

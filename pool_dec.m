@@ -11,16 +11,6 @@ function [MNeg,MPos,Pos] = pool_dec(A,poolVal,posNum)
 %
 %%  
 
-switch posNum
-
-    case 0
-        fprintf('Decoding pool results without knowing the number of positives individual samples...\n');
-    
-    case 1
-        fprintf('Decoding pool results with 1 positive individual sample...\n');
-    
-end
-
 [poolNum,sampNum] = size(A); 
 poolPos = find(poolVal==1); poolNeg = find(poolVal==0); 
 

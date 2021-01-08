@@ -5,10 +5,6 @@ function dataPath = AdReqDataPathSetup3rd(dataPath,Params)
 % Updated by JYI, 12/29/2020
 % - build on top of dataSecStgPathSetup.m
 % - only the third stage data will be loaded for decoding in MHV1
-% - ToDo: only the third stage data will be loaded for decoding in
-% COVID-case
-% - ToDo: only the third stage data will be loaded for decoding in
-% MVH1_2 case
 % 
 %% 
 
@@ -17,7 +13,7 @@ ctValType = Params.ctValType;
 virusID = Params.virusID; 
 
 switch virusID
-    case 'MHV1'
+    case 'MHV-1'
 
         if strcmp(ctValType,'primary')
             switch MatInfo
@@ -78,9 +74,9 @@ switch virusID
 
                 case '16 by 40'
 
-                    dataPath.runInd = {1,2};
-                    dataPath.sheetID = {'Sheet1','Sheet1'};
-                    dataPath.Rg = {'C4:E6','C10:E12'};
+                    dataPath.runInd = {};
+                    dataPath.sheetID = {};
+                    dataPath.Rg = {};
             end
 
         elseif strcmp(ctValType,'secondary')
@@ -94,9 +90,9 @@ switch virusID
 
                 case '16 by 40'
 
-                    dataPath.runInd = {1,2};
-                    dataPath.sheetID = {'Sheet1','Sheet1'};
-                    dataPath.Rg = {'C4:F4','C10:F10'};
+                    dataPath.runInd = {};
+                    dataPath.sheetID = {};
+                    dataPath.Rg = {};
             end
 
         end

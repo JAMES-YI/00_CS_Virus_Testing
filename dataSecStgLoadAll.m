@@ -1,4 +1,4 @@
-function [poolset,Params] = dataSecStgLoadAll(poolset,Params,dataSecStgPath)
+function [poolset,Params] = dataSecStgLoadAll(poolset,Params,dataPath)
 % This function will load all the primal and secondary test results.
 %
 % Created by JYI, 10/04/2020
@@ -20,14 +20,21 @@ switch virusID
         ctValType = 'primary';
         Params.ctValType = ctValType;
         % dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
-        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
+        if dataPath.currStage==2
+            % dataPath = dataSecStgPathSetup(dataPath,Params);
+            dataPath = AdReqDataPathSetup2nd(dataPath,Params);
+        elseif dataPath.currStage==3
+            dataPath = AdReqDataPathSetup3rd(dataPath,Params);
+        else
+            error('Error with stage setup');
+        end
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');
         % cell_dat = {'13,15,21'; '42,40,47,11,30'; '15,51,23'; '67,76'};
         % cell_dat_split = cellfun(@(S) sscanf(S, '%f,').', cell_dat, 'Uniform', 0);
 
-        SSDataLoader = SecStgDataLoader(dataSecStgPath,Params);
+        SSDataLoader = SecStgDataLoader(dataPath,Params);
         [SSDataLoader,dataTxt] = SSDataLoader.loadData(Params);
         SSDataLoader = SSDataLoader.MixMatGen(dataTxt,Params);
 
@@ -41,14 +48,21 @@ switch virusID
         ctValType = 'secondary';
         Params.ctValType = ctValType;
         % dataSecStgPath = dataSecStgPathSetup(MatInfo,ctValType,dataSecStgPath);
-        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
+        if dataPath.currStage==2
+            % dataPath = dataSecStgPathSetup(dataPath,Params);
+            dataPath = AdReqDataPathSetup2nd(dataPath,Params);
+        elseif dataPath.currStage==3
+            dataPath = AdReqDataPathSetup3rd(dataPath,Params);
+        else
+            error('Error with stage setup');
+        end
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');
         % cell_dat = {'13,15,21'; '42,40,47,11,30'; '15,51,23'; '67,76'};
         % cell_dat_split = cellfun(@(S) sscanf(S, '%f,').', cell_dat, 'Uniform', 0);
 
-        SSDataLoader = SecStgDataLoader(dataSecStgPath,Params);
+        SSDataLoader = SecStgDataLoader(dataPath,Params);
         [SSDataLoader,dataTxt] = SSDataLoader.loadData(Params);
         SSDataLoader = SSDataLoader.MixMatGen(dataTxt,Params);
 
@@ -61,14 +75,21 @@ switch virusID
         % load primary data
         ctValType = 'primary';
         Params.ctValType = ctValType;
-        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
+        if dataPath.currStage==2
+            % dataPath = dataSecStgPathSetup(dataPath,Params);
+            dataPath = AdReqDataPathSetup2nd(dataPath,Params);
+        elseif dataPath.currStage==3
+            dataPath = AdReqDataPathSetup3rd(dataPath,Params);
+        else
+            error('Error with stage setup');
+        end
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');
         % cell_dat = {'13,15,21'; '42,40,47,11,30'; '15,51,23'; '67,76'};
         % cell_dat_split = cellfun(@(S) sscanf(S, '%f,').', cell_dat, 'Uniform', 0);
 
-        SSDataLoader = SecStgDataLoader(dataSecStgPath,Params);
+        SSDataLoader = SecStgDataLoader(dataPath,Params);
         [SSDataLoader,dataTxt] = SSDataLoader.loadData(Params);
         SSDataLoader = SSDataLoader.MixMatGen(dataTxt,Params);
 
@@ -81,14 +102,21 @@ switch virusID
 
         ctValType = 'secondary';
         Params.ctValType = ctValType;
-        dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params);
+        if dataPath.currStage==2
+            % dataPath = dataSecStgPathSetup(dataPath,Params);
+            dataPath = AdReqDataPathSetup2nd(dataPath,Params);
+        elseif dataPath.currStage==3
+            dataPath = AdReqDataPathSetup3rd(dataPath,Params);
+        else
+            error('Error with stage setup');
+        end
 
         % fID = 'Data/MHV1 Re-Test Results.xlsx';
         % [num,txt] = xlsread(fID,'Sheet1','F10:I14');
         % cell_dat = {'13,15,21'; '42,40,47,11,30'; '15,51,23'; '67,76'};
         % cell_dat_split = cellfun(@(S) sscanf(S, '%f,').', cell_dat, 'Uniform', 0);
 
-        SSDataLoader = SecStgDataLoader(dataSecStgPath,Params);
+        SSDataLoader = SecStgDataLoader(dataPath,Params);
         [SSDataLoader,dataTxt] = SSDataLoader.loadData(Params);
         SSDataLoader = SSDataLoader.MixMatGen(dataTxt,Params);
 

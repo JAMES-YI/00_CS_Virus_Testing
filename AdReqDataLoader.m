@@ -62,10 +62,12 @@ methods
         % - configuration for MHV1_2
         
         % specify file path
+        dataPath.currStage = indStage;
         switch dataLoader.virusID
             
             case 'MHV-1'
                 
+                %% MHV-1 specify file path
                 if dataLoader.Params.trialInd==1
                     
                     dataPath.fID = sprintf('Data/MHV-1_Trial-%d_Stage-%d_Encoded_KWALDSTEIN_202010042110.xlsx',...
@@ -79,9 +81,34 @@ methods
                 else
                     error('Params.trialInd can take at most 2 for MHV-1.')
                 end
-                   
+                
+                %% MHV-1 specify regions
+                if strcmp(dataLoader.Params.ctValType,'primary') || strcmp(dataLoader.Params.ctValType,'secondary')
+
+                    % dataPath = dataSecStgPathSetup(dataPath,dataLoader.Params);
+                    if dataPath.currStage==2
+                        % dataPath = dataSecStgPathSetup(dataPath,Params);
+                        dataPath = AdReqDataPathSetup2nd(dataPath,dataLoader.Params);
+                    elseif dataPath.currStage==3
+                        dataPath = AdReqDataPathSetup3rd(dataPath,dataLoader.Params);
+                    else
+                        error('Error with stage setup');
+                    end
+
+                elseif strcmp(dataLoader.Params.ctValType,'all')
+
+                    dataPath = dataPath; % datapath will be specified later
+
+                else 
+
+                    error("The type of ct values can only be 'all', 'primary', or 'secondary'!");
+                end
+
+	
+            %%   
             case 'COVID-19'
                 
+                %% COVID-19 specify file path
                 if dataLoader.Params.trialInd==1
                     dataPath.fID = sprintf('Data/COVID-19_Trial-%d_Stage-%d_Encoded_KWALDSTEIN_202010281100.xlsx',...
                                 dataLoader.Params.trialInd,indStage); % need to specify the trialInd and the stage index
@@ -89,22 +116,52 @@ methods
                     error('Params.trialInd can take at most 1 for COVID-19.');
                 end
                 
+                %% COVID-19 specify regions
+                if strcmp(dataLoader.Params.ctValType,'primary') || strcmp(dataLoader.Params.ctValType,'secondary')
+
+                    % dataPath = dataSecStgPathSetup(dataPath,dataLoader.Params);
+                    if dataPath.currStage==2
+                        % dataPath = dataSecStgPathSetup(dataPath,Params);
+                        dataPath = AdReqDataPathSetup2nd(dataPath,dataLoader.Params);
+                    else
+                        error('Error with stage setup');
+                    end
+
+                elseif strcmp(dataLoader.Params.ctValType,'all')
+
+                    dataPath = dataPath; % datapath will be specified later
+
+                else 
+
+                    error("The type of ct values can only be 'all', 'primary', or 'secondary'!");
+
+                end
+                
+                
         end
         
-        % specify regions
-        if strcmp(dataLoader.Params.ctValType,'primary') || strcmp(dataLoader.Params.ctValType,'secondary')
-            
-            dataPath = dataSecStgPathSetup(dataPath,dataLoader.Params);
-            
-        elseif strcmp(dataLoader.Params.ctValType,'all')
-            
-            dataPath = dataPath; % datapath will be specified later
-            
-        else 
-            
-            error("The type of ct values can only be 'all', 'primary', or 'secondary'!");
-            
-        end
+%         % specify regions
+%         if strcmp(dataLoader.Params.ctValType,'primary') || strcmp(dataLoader.Params.ctValType,'secondary')
+%             
+%             % dataPath = dataSecStgPathSetup(dataPath,dataLoader.Params);
+%             if dataPath.currStage==2
+%                 % dataPath = dataSecStgPathSetup(dataPath,Params);
+%                 dataPath = AdReqDataPathSetup2nd(dataPath,dataLoader.Params);
+%             elseif dataPath.currStage==3
+%                 dataPath = AdReqDataPathSetup3rd(dataPath,dataLoader.Params);
+%             else
+%                 error('Error with stage setup');
+%             end
+%             
+%         elseif strcmp(dataLoader.Params.ctValType,'all')
+%             
+%             dataPath = dataPath; % datapath will be specified later
+%             
+%         else 
+%             
+%             error("The type of ct values can only be 'all', 'primary', or 'secondary'!");
+%             
+%         end
         
     end
     

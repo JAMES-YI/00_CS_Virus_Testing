@@ -5,10 +5,6 @@ function dataPath = AdReqDataPathSetup2nd(dataPath,Params)
 % Updated by JYI, 12/29/2020
 % - build on top of dataSecStgPathSetup.m
 % - only the second stage data will be loaded for decoding in MHV1
-% - ToDo: only the second stage data will be loaded for decoding in
-% COVID-case
-% - ToDo: only the second stage data will be loaded for decoding in
-% MVH1_2 case
 % 
 %% 
 
@@ -17,7 +13,7 @@ ctValType = Params.ctValType;
 virusID = Params.virusID; 
 
 switch virusID
-    case 'MHV1'
+    case 'MHV-1'
 
         if strcmp(ctValType,'primary')
             switch MatInfo
@@ -104,8 +100,6 @@ switch virusID
             end
 
         end
-        
-    case 'MHV1_2'
         
 end
 

@@ -21,6 +21,8 @@ function dataSecStgPath = dataSecStgPathSetup(dataSecStgPath,Params)
 % - incorporate retests results for COVID-19
 % - introduce variable Params
 % 
+% Updated by JYI, 01/05/2020
+% - change 'MHV1' to 'MHV-1'
 %% 
 
 MatInfo = Params.MatInfo;
@@ -28,7 +30,7 @@ ctValType = Params.ctValType;
 virusID = Params.virusID; 
 
 switch virusID
-    case 'MHV1'
+    case 'MHV-1'
 
         if strcmp(ctValType,'primary')
             switch MatInfo
@@ -50,7 +52,8 @@ switch virusID
                     dataSecStgPath.runInd = {1,2,3,4,5,6,7};
                     dataSecStgPath.sheetID = {'Sheet1','Sheet1','Sheet1','Sheet1','Sheet1','Sheet1',...
                                               'Sheet1'};
-                    dataSecStgPath.Rg = {'F4:H4','F7:H7','F10:H25','F28:H28','F31:H31','F34:H35',...
+                    dataSecStgPath.Rg = {'F4:H4','F7:H7','F10:H10','F28:H28',...
+                                         'F31:H31','F34:H35',...
                                          'F38:H38'};
             end
 
@@ -74,7 +77,8 @@ switch virusID
                     dataSecStgPath.runInd = {1,2,3,4,5,6,7};
                     dataSecStgPath.sheetID = {'Sheet1','Sheet1','Sheet1','Sheet1','Sheet1','Sheet1',...
                                               'Sheet1'};
-                    dataSecStgPath.Rg = {'F4:I4','F7:I7','F10:I25','F28:I28','F31:I31','F34:I35',...
+                    dataSecStgPath.Rg = {'F4:I4','F7:I7','F10:I10','F28:I28',...
+                                         'F31:I31','F34:I35',...
                                          'F38:I38'};
             end
 
